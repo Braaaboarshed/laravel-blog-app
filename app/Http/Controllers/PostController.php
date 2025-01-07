@@ -1,7 +1,9 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Post;
+use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,83 +18,95 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 class PostController extends Controller
 {
     use AuthorizesRequests;
+
+
+
     public function index()
     {
-        // $user = Auth::user();
-
+        $categories = Category::all();
+        $tags = Tag::all();
         $posts = Post:: all();
-        // dd($user);
-        return view('posts.index', compact('posts'));
+
+        return view('posts.index', compact('posts','tags','categories'));
     }
 
     public function create()
     {
-        return view('posts.create');
+        $categories = Category::all();
+        $tags = Tag::all();
+
+        return view('posts.create', compact('categories', 'tags'));
     }
+
 
     public function store(Request $request)
     {
+        $this->authorize('createPost', Post::class);
         $request->validate([
             'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'content' => 'required|string',
+            'category_id' => 'required|exists:categories,id',
+            'tags' => 'nullable|array', // تأكد من أن التاغات مصفوفة
+            'tags.*' => 'exists:tags,id', // تأكد من أن كل تاج موجود في جدول التاغات
         ]);
-        $imagePaths = [];
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
 
-                $path = $image->store('uploads/posts', 'public');
-                $imagePaths[] = $path;             }
-        }
-
+        // إنشاء البوست
         $post = Post::create([
             'title' => $request->title,
-            'description' => $request->description,
-            'image' =>  json_encode($imagePaths),
+            'content' => $request->content,
+            'category_id' => $request->category_id,
+            'user_id' => Auth::id(),
         ]);
 
+
+        if ($request->has('tags')) {
+            $post->tags()->attach($request->tags);
+        }
 
         return redirect()->route('posts.index')->with('success', 'Post created successfully!');
     }
 
+
+
     public function show(Post $post)
     {
- $images = json_decode($post->image, true);
-    return view('posts.show', compact('post', 'images'));
+
+        $categories = Category::all();
+        $tags = Tag::all();
+        $comments = $post->comments ;
+
+        return view('posts.show', compact('post','tags','categories','comments'));
     }
 
     public function edit(Post $post)
     {
+        $this->authorize('updatePost', $post);
 
- $images = json_decode($post->image, true);
-        return view('posts.edit', compact('post','images'));
+        $post = Post::findOrFail($post->id);
+        $categories = Category::all();
+        $tags = Tag::all();
+
+        return view('posts.edit', compact('categories', 'tags','post'));
     }
 
     public function update(Request $request, Post $post)
     {
-        $request->validate([
+        $this->authorize('updatePost', $post);
+        $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'content' => 'required|string',
+            'category_id' => 'required|exists:categories,id',
+            'tags' => 'array',
+            'tags' => "exists:tags,id"
+        ]);
+       Post::findOrFail($post->id);
+        $post->update([
+            'title' => $validated['title'],
+            'content' => $validated['content'],
+            'category_id' => $validated['category_id']
         ]);
 
-        $post->update($request->only(['title', 'description']));
-
-        $oldImages = json_decode($post->image, true) ?? [];
-        $newImages = [];
-
-        if ($request->hasFile('images')) {
-            foreach ($oldImages as $oldImage) {
-                Storage::delete('public/' . $oldImage);
-            }
-
-            foreach ($request->file('images') as $image) {
-                $path = $image->store('posts', 'public');
-                $newImages[] = $path;
-            }
-
-            $post->update(['image' => json_encode($newImages)]);
-        }
+        $post->tags()->sync($validated['tags'] ?? []);
 
         return redirect()->route('posts.index')->with('success', 'Post updated successfully!');
     }
@@ -102,23 +116,11 @@ class PostController extends Controller
 
     public function destroy(Post $post)
     {
-        $images = json_decode($post->image, true);
-
-        if (!empty($images)) {
-            foreach ($images as $imagePath) {
-                Storage::delete('public/' . $imagePath);
-            }
-        }
+          $this->authorize('deletePost', $post);
 
         $post->delete();
 
         return redirect()->route('posts.index')->with('success', 'Post deleted successfully!');
     }
 
-    public function deleteAllPosts()
-{
-    $this->authorize('deleteAllPosts', User::class);
-    DB::table('posts')->delete();
-    return redirect()->route('posts.index')->with('success', 'All posts deleted successfully!');
-}
 }

@@ -3,53 +3,70 @@
 namespace App\Policies;
 
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
+use App\Models\Post;
+use App\Models\Comment;
+use App\Models\Category;
+use App\Models\Tag;
 
 class UserPolicy
 {
-    /**
-     * Determine whether the user can view any models.
-     */
-
-
-    /**
-     * Determine whether the user can view the model.
-     */
-
-    /**
-     * Determine whether the user can create models.
-     */
-    public function create(User $user): bool
+    // السماح بإنشاء البوست
+    public function createPost(User $user)
     {
-        // dd($user->role);
-        return $user->role == 'admin' ;
+        return true;
     }
 
-    /**
-     * Determine whether the user can update the model.
-     */
-    public function update(User $user): bool
+    // السماح بمشاهدة جميع البوستات
+    public function viewAnyPost(User $user)
     {
-        return $user->role == 'admin' ;
+        return true;
     }
 
-    /**
-     * Determine whether the user can delete the model.
-     */
-    public function delete(User $user): bool
+    // السماح بمشاهدة بوست معين
+    public function viewPost(User $user, Post $post)
     {
-        return $user->role == 'admin' ;
+        return true;
     }
 
-    /**
-     * Determine whether the user can restore the model.
-     */
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function deleteAllPosts(User $user): bool
+    // السماح بتعديل بوست
+    public function updatePost(User $user, Post $post)
     {
-        return $user->role == 'admin' ;
+        return $user->id === $post->user_id;
+    }
+
+    // السماح بحذف بوست
+    public function deletePost(User $user, Post $post)
+    {
+        return $user->id === $post->user_id;
+    }
+
+    // السماح بإضافة تعليق على بوست
+    public function createComment(User $user, Post $post)
+    {
+        return true;
+    }
+
+    // السماح بتعديل تعليق
+    public function updateComment(User $user, Comment $comment)
+    {
+        return $user->id === $comment->user_id;
+    }
+
+    // السماح بحذف تعليق
+    public function deleteComment(User $user, Comment $comment)
+    {
+        return $user->id === $comment->user_id || $user->id === $comment->post->user_id;
+    }
+
+    // السماح للأدمن بإدارة التصنيفات (Categories)
+    public function manageCategory(User $user)
+    {
+        return $user->is_admin;
+    }
+
+    // السماح للأدمن بإدارة التاغات (Tags)
+    public function manageTag(User $user)
+    {
+        return $user->is_admin;
     }
 }

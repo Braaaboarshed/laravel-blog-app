@@ -3,70 +3,79 @@
 @section('title', 'All Posts')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center">
-    <h1>All Posts</h1>
-    <div>
-        <a href="{{ route('posts.create') }}" class="btn btn-primary">Add New Post</a>
-        @can('create','update','delete', App\Models\User::class)
+    <!-- محتوى الصفحة -->
+    <div class="container mt-4">
+        <div class="row">
+            <!-- قسم الفلترة -->
+            <div class="col-md-4">
+                <h3>فلترة المنشورات</h3>
+                <form id="filterForm">
+                    <div class="mb-3">
+                        <label for="category" class="form-label">الصنف</label>
+                        <select class="form-select" id="category" name="category">
+                            <option value="">الكل</option>
+                            @foreach ($categories as $category)
+                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
 
-        <a href="{{ route('users.index') }}" class="btn btn-primary">Mange users</a>
-        @endcan
-        
-        @can('deleteAllPosts', App\Models\User::class)
-        <form action="{{ route('deleteAllPosts') }}" method="POST" style="display: inline;">
-            @csrf
-            <button type="submit" class="btn btn-danger">Delete All Posts</button>
-        </form>
-    @endcan
+                    <div class="mb-3">
+                        <label for="tags" class="form-label">التاجات</label>
+                        <select class="form-select" id="tags" name="tags[]" multiple>
+                            @foreach ($tags as $tag)
+                                <option value="{{ $tag->id }}">{{ $tag->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
 
-        <form action="{{ route('logout') }}" method="POST" style="display: inline;">
-            @csrf
-            <button type="submit" class="btn btn-danger">Logout</button>
-        </form>
+                    <button type="submit" class="btn btn-primary">تصفية</button>
+                </form>
+            </div>
+
+            <!-- قسم عرض المنشورات -->
+            <div id="posts" class="col-md-8">
+                <h3>المنشورات</h3>
+                <div class="row">
+                    @forelse ($posts as $post)
+                        <div class="col-md-12 mb-2 post"
+                            data-category="{{ $post->category_id }}"
+                            data-tags="{{ $post->tags->pluck('id')->join(',') }}">
+
+                            <!-- جعل المنشور رابط للنقر عليه -->
+                            <a >
+                                <div class="card position-relative">
+                                    <div class="card-header d-flex justify-content-between">
+                                        <div class="d-flex align-items-center">
+                                            <img src="{{ $post->user->profile_image ?? 'default-avatar.png' }}" alt="User Avatar"
+                                                 class="rounded-circle me-2" style="width: 40px; height: 40px;">
+                                            <strong>{{ $post->user->name ?? 'Unknown User' }}</strong>
+                                        </div>
+                                      
+                                    </div>
+                                    <div class="card-body">
+                                        <h3 class="card-link"><a href="{{ route('posts.show', $post->id) }}">{{$post->title}}</a></h3>
+                                        <p class="card-text">{{ $post->content }}</p>
+                                        <p><strong>Category:</strong> {{ $post->category->name }}</p>
+                                        <p><strong>tags:</strong>
+                                            @foreach ($post->tags as $tag)
+                                                <span class="badge bg-secondary">{{ $tag->name }}</span>
+                                            @endforeach
+                                        </p>
+                                    </div>
+                                </div>
+                            </a>
+
+                        </div>
+                    @empty
+                        <p>لا توجد منشورات حالياً.</p>
+                    @endforelse
+                </div>
+            </div>
+
+
+        </div>
     </div>
 
-</div>
 
-<table class="table table-striped table-bordered table-dark">
-    <thead>
-        <tr>
-            <th scope="col">NO</th>
-            <th scope="col">Title</th>
-            <th scope="col">Description</th>
-            <th scope="col">Images</th>
-            <th scope="col">Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach ($posts as $post)
-        <tr>
-            <td>{{ $post->id }}</td>
-            <td>{{ $post->title }}</td>
-            <td>{{ Str::limit($post->description, 50) }}</td>
-            <td>
-                @if (!empty($post->image))
-                    @php
-                        $images = json_decode($post->image, true); // فك تشفير المصفوفة
-                    @endphp
-
-                    @foreach ($images as $image)
-                        <img src="{{ asset('storage/' . $image) }}" width="50" height="50" class="mr-2">
-                    @endforeach
-                @else
-                    No Images
-                @endif
-            </td>
-            <td>
-                <a href="{{ route('posts.show', $post->id) }}" class="btn btn-success btn-sm">View</a>
-                <a href="{{ route('posts.edit', $post->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                <form action="{{ route('posts.destroy', $post->id) }}" method="POST" class="d-inline">
-                    @csrf
-                    @method('DELETE')
-                    <button class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</button>
-                </form>
-            </td>
-        </tr>
-        @endforeach
-    </tbody>
-</table>
 @endsection
