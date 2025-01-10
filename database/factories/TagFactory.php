@@ -11,7 +11,7 @@ class TagFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->word, // اسم وسم وهمي
+            'name' => $this->faker->word, //   
         ];
     }
 }

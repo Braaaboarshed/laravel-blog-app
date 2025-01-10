@@ -10,23 +10,23 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class CommentFactory extends Factory
 {
     /**
-     * اسم نموذج الـ Factory.
+     *   ـ Factory.
      *
      * @var string
      */
     protected $model = Comment::class;
 
     /**
-     * تعريف النموذج (البيانات الوهمية).
+     *   ( ).
      *
      * @return array
      */
     public function definition()
     {
         return [
-            'content' => $this->faker->sentence(), // محتوى التعليق (جملة عشوائية)
-            'user_id' => User::factory(), // استخدام مصنع لإنشاء مستخدم وهمي عشوائي
-            'post_id' => Post::factory(), // استخدام مصنع لإنشاء منشور وهمي عشوائي
+            'content' => $this->faker->sentence(), //   ( )
+            'user_id' => User::factory(), //      
+            'post_id' => Post::factory(), //      
             'created_at' => now(),
             'updated_at' => now(),
         ];

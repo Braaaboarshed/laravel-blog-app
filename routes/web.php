@@ -23,11 +23,20 @@ Route::get('/', function () {
 Route::middleware('auth')->resource('posts', PostController::class);
 
 Route::middleware('auth')->resource('tags', TagController::class);
-Route::middleware('auth')->resource('users', UserController::class);
-Route::middleware('auth')->get('/user/{id}', [UserController::class, 'show'])->name('user.profile');
-Route::middleware('auth')->put('/user/{id}', [UserController::class, 'update']);
+Route::middleware('auth')->group(function () {
+    //   
+    Route::get('/user/{user}', [UserController::class, 'show'])->name('user.profile');
 
-// في ملف routes/web.php
+    //    
+    Route::get('/user/{user}/edit', [UserController::class, 'edit'])->name('user.edit');
+
+    //   
+    Route::put('/user/{user}/', [UserController::class, 'update'])->name('user.update');
+});
+// Route::middleware('auth')->put('/user/{user}', [UserController::class, 'update'])->name('user.update');
+// Route::middleware('auth')->get('/user/{user}', [UserController::class, 'show'])->name('user.profile');
+
+//   routes/web.php
 
 Route::middleware('auth')->resource('categories', CategoryController::class);
 

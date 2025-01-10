@@ -9,18 +9,18 @@
        @can('deletePost',$post)
        <div class="dropdown">
         <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton{{ $post->id }}" data-bs-toggle="dropdown" aria-expanded="false">
-            &#x22EE; <!-- ثلاث نقاط عمودية -->
+            &#x22EE; <!--    -->
         </button>
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton{{ $post->id }}">
             <li>
-                <form action="{{ route('posts.destroy', $post->id) }}" method="POST" onsubmit="return confirm('هل أنت متأكد من حذف هذا المنشور؟');">
+                <form action="{{ route('posts.destroy', $post->id) }}" method="POST" onsubmit="return confirm('      المنشور؟');">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="dropdown-item text-danger">مسح</button>
+                    <button type="submit" class="dropdown-item text-danger">Delete</button>
                 </form>
             </li>
             <li>
-                <a href="{{ route('posts.edit', $post->id) }}" class="dropdown-item">تعديل البوست</a>
+                <a href="{{ route('posts.edit', $post->id) }}" class="dropdown-item">Edit</a>
             </li>
         </ul>
     </div>
@@ -28,7 +28,7 @@
     </div>
 
     <div class="d-flex align-items-center mt-3">
-        <img src="{{ $post->user->profile_image ?? 'default-avatar.png' }}" alt="User Avatar"
+       <img src="{{ asset('uploads/' . $post->user->image) }}"  alt="User Avatar"
              class="rounded-circle me-2" style="width: 40px; height: 40px;">
         <strong>{{ $post->user->name ?? 'Unknown User' }}</strong>
     </div>
@@ -43,33 +43,33 @@
         @endforeach
     </p>
 
-    <h4 class="mt-4">التعليقات</h4>
+    <h4 class="mt-4">Comments</h4>
     @forelse($post->comments as $comment)
         <div class="card mb-3">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <div class="d-flex align-items-center">
-                        <img src="{{ $comment->user->profile_image ?? 'default-avatar.png' }}" alt="User Avatar"
+                        <img  src="{{ asset('uploads/' . $post->user->image) }}" alt="User Avatar"
                              class="rounded-circle me-2" style="width: 30px; height: 30px;">
                         <strong>{{ $comment->user->name }}</strong>
                     </div>
 
-                    <!-- إضافة أيقونات الحذف والتعديل -->
+                    <!--     -->
                     {{-- @if(auth()->check() && (auth()->id() == $comment->user_id || auth()->user()->is_admin)) --}}
                         <div>
                            @can('updateComment',$comment)
-                           <a href="{{ route('comments.edit', $comment->id) }}" class="text-primary me-2" title="تعديل التعليق">
-                            <i class="bi bi-pencil-square" style="font-size: 1.5rem; color: #007bff;"></i> <!-- أيقونة التعديل بأزرق فاقع -->
+                           <a href="{{ route('comments.edit', $comment->id) }}" class="text-primary me-2" title="edit">
+                            <i class="bi bi-pencil-square" style="font-size: 1.5rem; color: #007bff;"></i> <!--     -->
                         </a>
                            @endcan
 
                         @can('deleteComment', $comment)
-                             <!-- أيقونة حذف التعليق -->
-                             <form action="{{ route('comments.destroy', $comment->id) }}" method="POST" class="d-inline" onsubmit="return confirm('هل أنت متأكد من حذف هذا التعليق؟');">
+                             <!--    -->
+                             <form action="{{ route('comments.destroy', $comment->id) }}" method="POST" class="d-inline" onsubmit="return confirm('      التعليق؟');">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-link text-danger" title="حذف التعليق">
-                                    <i class="bi bi-trash" style="font-size: 1.5rem; color: #dc3545;"></i> <!-- أيقونة الحذف باللون الأحمر الفاقع -->
+                                <button type="submit" class="btn btn-link text-danger" title="delete">
+                                    <i class="bi bi-trash" style="font-size: 1.5rem; color: #dc3545;"></i> <!--      -->
                                 </button>
                             </form>
                         @endcan
@@ -80,27 +80,27 @@
             </div>
         </div>
     @empty
-        <p>لا توجد تعليقات بعد.</p>
+        <p>no comment yet.</p>
     @endforelse
 
-    <!-- إضافة تعليق جديد -->
+    <!--    -->
     {{-- @if(auth()->check()) --}}
-        <h4 class="mt-4">أضف تعليقك</h4>
+        <h4 class="mt-4">Add your comment</h4>
         <form action="{{ route('comments.store',$post->id) }}" method="POST">
             @csrf
             <div class="mb-3">
-                <label for="comment" class="form-label">تعليقك</label>
+                <label for="comment" class="form-label">your comment</label>
                 <textarea id="comment" name="content" class="form-control" rows="4" required></textarea>
             </div>
 
             <input type="hidden" name="post_id" value="{{ $post->id }}">
 
-            <button type="submit" class="btn btn-primary">إضافة تعليق</button>
+            <button type="submit" class="btn btn-primary">Add Comment</button>
         </form>
     {{-- @else
-        <p>لإضافة تعليق، يرجى <a href="{{ route('login') }}">تسجيل الدخول</a>.</p>
+        <p> تعليق،  <a href="{{ route('login') }}"> </a>.</p>
     @endif --}}
 
-    <a href="{{ route('posts.index') }}" class="btn btn-primary mt-3">عودة إلى كل المنشورات</a>
+    <a href="{{ route('posts.index') }}" class="btn btn-primary mt-3">go to posts page</a>
 </div>
 @endsection

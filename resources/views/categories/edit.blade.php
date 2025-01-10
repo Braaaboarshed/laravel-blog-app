@@ -1,4 +1,4 @@
-<!-- في resources/views/categories/edit.blade.php -->
+<!--  resources/views/categories/edit.blade.php -->
 
 @extends('layout')
 

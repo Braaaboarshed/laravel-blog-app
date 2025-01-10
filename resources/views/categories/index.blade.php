@@ -1,4 +1,4 @@
-<!-- في resources/views/categories/index.blade.php -->
+<!--  resources/views/categories/index.blade.php -->
 
 @extends('layout')
 
@@ -16,7 +16,7 @@
                 <div class="d-flex justify-content-between">
                     <strong>{{ $category->name }}</strong>
 
-                    <!-- روابط تعديل وحذف -->
+                    <!--    -->
                     <div>
                         <a href="{{ route('categories.edit', $category->id) }}" class="btn btn-warning btn-sm">Edit</a>
                         <form action="{{ route('categories.destroy', $category->id) }}" method="POST" style="display:inline" onsubmit="return confirm('Are you sure?');">
@@ -27,9 +27,8 @@
                     </div>
                 </div>
 
-                @if($category->image)
-                    <img src="{{ Storage::url($category->image) }}" alt="Category Image" class="img-thumbnail mt-2" width="100">
-                @endif
+                    <img  src="{{ asset($category->image) }}" alt="Category Image" class="img-thumbnail mt-2" width="100">
+
             </div>
         </div>
     @endforeach

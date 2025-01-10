@@ -3,6 +3,8 @@
 @section('title', 'Edit Post')
 
 @section('content')
+
+<div class="container mt-4">
 <h1>Edit Post</h1>
 
 <form action="{{ route('posts.update', $post->id) }}" method="POST" enctype="multipart/form-data">
@@ -49,5 +51,6 @@
     <!-- Submit Button -->
     <button type="submit" class="btn btn-primary">Update Post</button>
 </form>
+</div>
 
 @endsection

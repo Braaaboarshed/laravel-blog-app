@@ -14,10 +14,10 @@ class PostFactory extends Factory
     public function definition()
     {
         return [
-            'title' => $this->faker->sentence, // عنوان وهمي
-            'content' => $this->faker->paragraph, // محتوى وهمي
-            'user_id' => User::factory(), // استخدام Factory لتوليد مستخدم وهمي
-            'category_id' => Category::factory(), // استخدام Factory لتوليد صنف وهمي
+            'title' => $this->faker->sentence, //  
+            'content' => $this->faker->paragraph, //  
+            'user_id' => User::factory(), //  Factory   
+            'category_id' => Category::factory(), //  Factory   
         ];
     }
 }

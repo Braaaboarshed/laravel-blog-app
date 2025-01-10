@@ -9,16 +9,16 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-    // عرض صفحة التسجيل
+    //   
     public function showRegisterForm()
     {
         return view('auth.register');
     }
 
-    // معالجة التسجيل
+    //  
     public function register(Request $request)
     {
-        // التحقق من البيانات المدخلة
+        //    
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
@@ -30,7 +30,7 @@ class AuthController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        // إنشاء المستخدم
+        //  
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -38,31 +38,31 @@ class AuthController extends Controller
             'is_admin' => false
         ]);
 
-        // تسجيل الدخول بعد التسجيل مباشرة
+        //     
         Auth::login($user);
 
-        return redirect()->route('home'); // أو أي صفحة تريد توجيه المستخدم إليها
+        return redirect()->route('home'); //       
     }
 
-    // عرض صفحة تسجيل الدخول
+    //    
     public function showLoginForm()
     {
         return view('auth.login');
     }
 
-    // معالجة تسجيل الدخول
+    //   
     public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
-            return redirect()->intended('posts'); // إعادة توجيه للمسار المطلوب
+            return redirect()->intended('posts'); //    
         }
 
-        return redirect()->back()->withErrors(['email' => 'هذه بيانات تسجيل الدخول غير صحيحة']);
+        return redirect()->back()->withErrors(['email' => '     ']);
     }
 
-    // تسجيل الخروج
+    //  
     public function logout()
     {
         Auth::logout();

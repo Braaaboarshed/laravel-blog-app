@@ -12,7 +12,7 @@ class CategoryFactory extends Factory
     {
         return [
             'name' => $this->faker->word,
-            'image' => $this->faker->optional()->imageUrl(100, 100, 'categories', true, 'Category Image'), // صورة وهمية أو null
+            'image' => $this->faker->optional()->imageUrl(100, 100, 'categories', true, 'Category Image'), //    null
         ];
     }
 }

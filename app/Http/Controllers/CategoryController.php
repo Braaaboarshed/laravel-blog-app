@@ -1,13 +1,11 @@
 <?php
 
-// في ملف CategoryController.php
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use App\Models\Tag;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 
 class CategoryController extends Controller
 {
@@ -15,7 +13,7 @@ class CategoryController extends Controller
 
     public function index()
     {
-        $this->authorize('manageTag', Tag::class);
+        $this->authorize('manageCategory', Category::class);
 
         $categories = Category::all();
         return view('categories.index', compact('categories'));
@@ -23,14 +21,14 @@ class CategoryController extends Controller
 
     public function create()
     {
-        $this->authorize('manageTag', Tag::class);
+        $this->authorize('manageCategory', Category::class);
 
         return view('categories.create');
     }
 
     public function store(Request $request)
     {
-        $this->authorize('manageTag', Tag::class);
+        $this->authorize('manageCategory', Category::class);
 
         $request->validate([
             'name' => 'required|string|max:255',
@@ -41,7 +39,10 @@ class CategoryController extends Controller
         $category->name = $request->name;
 
         if ($request->hasFile('image')) {
-            $category->image = $request->file('image')->store('categories');
+            $image = $request->file('image');
+            $imageName = time() . '_' . $image->getClientOriginalName();
+            $image->move(public_path('uploads'), $imageName);
+            $category->image = 'uploads/' . $imageName;
         }
 
         $category->save();
@@ -51,7 +52,7 @@ class CategoryController extends Controller
 
     public function edit($id)
     {
-        $this->authorize('manageTag', Tag::class);
+        $this->authorize('manageCategory', Category::class);
 
         $category = Category::findOrFail($id);
         return view('categories.edit', compact('category'));
@@ -59,7 +60,7 @@ class CategoryController extends Controller
 
     public function update(Request $request, $id)
     {
-        $this->authorize('manageTag', Tag::class);
+        $this->authorize('manageCategory', Category::class);
 
         $request->validate([
             'name' => 'required|string|max:255',
@@ -70,11 +71,15 @@ class CategoryController extends Controller
         $category->name = $request->name;
 
         if ($request->hasFile('image')) {
-            // حذف الصورة القديمة
-            if ($category->image) {
-                Storage::delete($category->image);
+            //     
+            if ($category->image && File::exists(public_path($category->image))) {
+                File::delete(public_path($category->image));
             }
-            $category->image = $request->file('image')->store('categories');
+
+            $image = $request->file('image');
+            $imageName = time() . '_' . $image->getClientOriginalName();
+            $image->move(public_path('uploads/'), $imageName);
+            $category->image = 'uploads/' . $imageName;
         }
 
         $category->save();
@@ -83,15 +88,14 @@ class CategoryController extends Controller
     }
 
     public function destroy($id)
-
     {
-        $this->authorize('manageTag', Tag::class);
+        $this->authorize('manageCategory', Category::class);
 
         $category = Category::findOrFail($id);
 
-        // حذف الصورة إذا كانت موجودة
-        if ($category->image) {
-            Storage::delete($category->image);
+        //    
+        if ($category->image && File::exists(public_path($category->image))) {
+            File::delete(public_path($category->image));
         }
 
         $category->delete();
@@ -99,4 +103,3 @@ class CategoryController extends Controller
         return redirect()->route('categories.index')->with('success', 'Category deleted successfully!');
     }
 }
-

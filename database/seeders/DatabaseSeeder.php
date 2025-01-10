@@ -10,16 +10,16 @@ class DatabaseSeeder extends Seeder
 {
     public function run()
     {
-        // قم بإنشاء 10 مستخدمين وهميين
+        //   10  
         User::factory(10)->create();
 
-        // قم بإنشاء 5 أصناف وهمية
+        //   5  
         Category::factory(5)->create();
 
-        // قم بإنشاء 20 بوستات وهمية
+        //   20  
         Post::factory(20)->create();
 
-        // قم بإنشاء 10 وسوم وهمية
+        //   10  
         Tag::factory(10)->create();
 
         Comment::factory()->count(20)->create();

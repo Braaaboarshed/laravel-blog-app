@@ -181,9 +181,9 @@ NOTE:
 
   $('#sweetalert-13').click(function(e) {
       swal({
-      title: 'هل تريد الاستمرار؟',
-      confirmButtonText:  'نعم',
-      cancelButtonText:  'لا',
+      title: '  ؟',
+      confirmButtonText:  '',
+      cancelButtonText:  '',
       showCancelButton: true,
       showCloseButton: true,
       target: document.getElementById('rtl-container')

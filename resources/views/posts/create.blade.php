@@ -3,6 +3,7 @@
 @section('title', 'Create Post')
 
 @section('content')
+<div class="container mt-4">
 <h1>Create New Post</h1>
 
 <form action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data">
@@ -45,15 +46,5 @@
     <button type="submit" class="btn btn-success">Save Post</button>
 </form>
 
-<!-- Include Select2 Library -->
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/js/select2.min.js"></script>
-<script>
-    $(document).ready(function() {
-        $('.tags-input').select2({
-            placeholder: 'Select or Add Tags',
-            tags: true, // Allows users to add new tags
-        });
-    });
-</script>
+</div>
 @endsection

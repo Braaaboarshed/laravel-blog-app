@@ -10,15 +10,15 @@
         </div>
         <div class="card-body">
             <div class="d-flex align-items-center mb-3">
-                <img src="{{ $user->image ?? asset('default-avatar.png') }}" alt="User Avatar"
+                <img src="{{ asset('uploads/' . $user->image) }}" alt="User Avatar"
                      class="rounded-circle me-3" style="width: 100px; height: 100px;">
                 <h4>{{ $user->name }}</h4>
             </div>
             <p><strong>Email:</strong> {{ $user->email }}</p>
             <p><strong>Joined:</strong> {{ $user->created_at->format('d M, Y') }}</p>
 
-            <!-- نموذج تعديل الصورة -->
-            <form action="{{ route('user.update', $user->id) }}" method="POST" enctype="multipart/form-data">
+            <!--    -->
+            <form action="{{ route('user.update', $user) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
                 <div class="mb-3">

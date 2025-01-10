@@ -46,11 +46,11 @@ class PostController extends Controller
             'title' => 'required|string|max:255',
             'content' => 'required|string',
             'category_id' => 'required|exists:categories,id',
-            'tags' => 'nullable|array', // تأكد من أن التاغات مصفوفة
-            'tags.*' => 'exists:tags,id', // تأكد من أن كل تاج موجود في جدول التاغات
+            'tags' => 'nullable|array', //     
+            'tags.*' => 'exists:tags,id', //         
         ]);
 
-        // إنشاء البوست
+        //  
         $post = Post::create([
             'title' => $request->title,
             'content' => $request->content,

@@ -12,7 +12,7 @@ class CommentController extends Controller
 {
     use AuthorizesRequests;
 
-    // دالة تخزين التعليق (store)
+    //    (store)
     public function store(Request $request, $postId)
     {
         $request->validate([
@@ -31,10 +31,10 @@ class CommentController extends Controller
         return redirect()->route('posts.show', $post->id)->with('success', 'Comment added successfully!');
     }
 
-    // دالة عرض تعديل التعليق (edit)
+    //     (edit)
     public function edit(Comment $comment)
     {
-        // التأكد من أن المستخدم هو من أضاف التعليق
+        //        
         if ($comment->user_id != Auth::user()->id) {
             return redirect()->route('posts.show', $comment->post_id)->with('error', 'You cannot edit this comment');
         }
@@ -42,7 +42,7 @@ class CommentController extends Controller
         return view('comments.edit', compact('comment'));
     }
 
-    // دالة تحديث التعليق (update)
+    //    (update)
     public function update(Request $request, Comment $comment)
     {
         // if ($comment->user_id != Auth::user()->id) {
@@ -60,7 +60,7 @@ class CommentController extends Controller
         return redirect()->route('posts.show', $comment->post_id)->with('success', 'Comment updated successfully!');
     }
 
-    // دالة حذف التعليق (destroy)
+    //    (destroy)
     public function destroy(Comment $comment)
     {
         $this->authorize('deleteComment', $comment);
